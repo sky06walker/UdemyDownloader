@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "Udemy DRM Downloader",
+  "version": "1.1.0",
+  "description": "Download Udemy videos and resources to MP4 with subtitles (VTT to SRT) and DRM detection.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://*.udemy.com/*",
+    "https://*.udemycdn.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Udemy Downloader",
+    "default_icon": {
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "bg.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.udemy.com/*"
+      ],
+      "js": [
+        "inject/content-loader.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "inject/*.js",
+        "utils/*.js",
+        "icons/*.png"
+      ],
+      "matches": [
+        "https://*.udemy.com/*"
+      ]
+    }
+  ]
+}

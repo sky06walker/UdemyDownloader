@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Udemy DRM Downloader</title>
+  <style>
+    :root {
+      --bg: #1c1d1f;
+      --card: #2d2f31;
+      --text: #ffffff;
+      --text-muted: #a1a7b3;
+      --primary: #a435f0;
+      --primary-hover: #8710d8;
+      --success: #2ecc71;
+      --warning: #f39c12;
+      --danger: #e74c3c;
+      --border: #3e4143;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+    body { width: 380px; background: var(--bg); color: var(--text); padding: 16px; font-size: 13px; }
+
+    .header { display: flex; align-items: center; justify-content: space-between;
+              border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+    .header h1 { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+
+    .header-btn { background: none; border: 1px solid var(--border); color: var(--text-muted);
+                  border-radius: 4px; cursor: pointer; padding: 4px 8px; font-size: 11px; }
+    .header-btn:hover { color: var(--text); border-color: var(--text-muted); }
+
+    .card { background: var(--card); border-radius: 8px; padding: 12px;
+            margin-bottom: 12px; border: 1px solid var(--border); }
+
+    .info-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase;
+                  letter-spacing: .5px; margin-bottom: 2px; }
+    .info-value { font-size: 13px; font-weight: 600; margin-bottom: 8px; word-break: break-word; }
+
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 12px;
+             font-size: 11px; font-weight: 600; color: #fff; margin-top: 4px; }
+
+    .section-title { font-size: 12px; font-weight: 600; color: var(--text-muted);
+                     margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+
+    .item-list { display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow-y: auto; }
+    .item-row  { display: flex; align-items: center; justify-content: space-between;
+                 background: #222426; padding: 6px 10px; border-radius: 4px; font-size: 12px; }
+
+    .btn { display: block; width: 100%; background: var(--primary); color: #fff; border: none;
+           padding: 9px 12px; border-radius: 6px; font-size: 13px; font-weight: 600;
+           cursor: pointer; text-align: center; transition: background .15s; }
+    .btn:hover:not(:disabled) { background: var(--primary-hover); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .btn-small { width: auto; padding: 3px 8px; font-size: 11px; background: #44484b; border: none;
+                 color: #fff; border-radius: 4px; cursor: pointer; }
+    .btn-small:hover:not(:disabled) { background: #5a5f63; }
+
+    .notice { font-size: 11px; color: var(--text-muted); line-height: 1.4; margin-top: 8px;
+              padding: 8px; border-radius: 4px; background: #232527; border-left: 3px solid var(--border); }
+    .notice.warning { border-left-color: var(--warning); }
+    .notice.danger  { border-left-color: var(--danger); }
+
+    .status-msg { margin-top: 10px; padding: 8px; border-radius: 4px; font-size: 12px; display: none; }
+    .status-msg.success { display: block; background: rgba(46,204,113,.2); color: #2ecc71; }
+    .status-msg.error   { display: block; background: rgba(231,76,60,.2); color: #e74c3c; }
+
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3);
+               border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎬 Udemy Downloader</h1>
+    <button id="btn-scan" class="header-btn" title="Fetch streams via Udemy API">🔄 Scan</button>
+  </div>
+
+  <!-- Course / lecture info -->
+  <div class="card">
+    <div class="info-label">Course</div>
+    <div id="course-title" class="info-value">Loading…</div>
+
+    <div class="info-label">Lecture</div>
+    <div id="lecture-title" class="info-value">—</div>
+
+    <div class="info-label">Stream Status</div>
+    <div id="stream-status">
+      <span class="badge" style="background:#95a5a6;">Not scanned</span>
+    </div>
+  </div>
+
+  <!-- Video quality list -->
+  <div class="card" id="video-card" style="display:none;">
+    <div class="section-title"><span>Video Streams (<span id="vid-count">0</span>)</span></div>
+    <div id="video-list" class="item-list"></div>
+  </div>
+
+  <!-- Subtitles list -->
+  <div class="card" id="subs-card" style="display:none;">
+    <div class="section-title">
+      <span>Subtitles (<span id="sub-count">0</span>)</span>
+      <button id="btn-dl-all-subs" class="header-btn">Download All</button>
+    </div>
+    <div id="subtitles-list" class="item-list"></div>
+  </div>
+
+  <div id="status-box" class="status-msg"></div>
+
+  <div id="notice-box" class="notice">
+    Open a Udemy lecture and click <b>🔄 Scan</b> to fetch downloadable streams from the Udemy API.
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
